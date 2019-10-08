@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>DES Encryption/Decryption</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+    
+    
+</head>
+{% autoescape on %}
+<body>
+    <center>
+    <div class="container">
+        <div class="row" style="margin-top:10px; position:relative; left:50%; transform: translate(-50%);">
+        <textarea  class="col-lg-4 col-sm-4 col-md-4 col-xs-12" name="plain_text" id="plain_t" cols="30" rows="25" placeholder="Plain Text">{{plain_text}}</textarea>
+        <div class="col-lg-1 col-sm-1 col-md-1 col-xs-12"></div>
+        <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12" style="margin:0;padding:5px;height: 100%">
+
+            <div class="col-lg-12 col-sm-12 col-md-12" style="margin-top:10px; padding: 0" >
+                <input style="margin: 0%" type = "text" name="KEY" placeholder="64Bit Hexadecimal Key" id="key_text">
+            </div>
+
+            <div class="col-lg-12 col-sm-12 col-md-12" style="margin-top:10px; padding: 0" >
+                <Button class="btn btn-primary" id = "encrypt">ENCRYPT-></Button>
+            </div>
+            
+            <div class="col-lg-12 col-sm-12 col-md-12" style="margin-top:10px; padding: 0">
+                <Button class="btn btn-primary"  id="decrypt"><-DECRYPT</Button>
+            </div>
+        </div>
+        <div class="col-lg-1 col-sm-1 col-md-1 col-xs-12"></div>
+        <textarea class="col-lg-4 col-sm-4 col-md-4 col-xs-12" name="cipher_text" id="cipher_t" cols="30" rows="25" placeholder="Cipher Text in Hexadecimal">{{cipher_text}}</textarea>
+        
+        </div>
+    </div>
+    </center>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+    $("button#encrypt").click(function () {
+        message = $('textarea#plain_t').val()
+        key = $('input#key_text').val()
+        $.ajax({
+            type: 'POST',
+            
+            url: "{% url 'DES_FUNCTION:encrypt' %}",
+            data: {
+                'plain_text': message, 
+                'Key': key// <-- the $ sign in the parameter name seems unusual, I would avoid it
+            },
+            success: function (msg) {
+                $('textarea#cipher_t').val(msg)
+            }
+        });
+    });
+
+    $("button#decrypt").click(function () {
+            cipher = $('textarea#cipher_t').val()
+            key = $('input#key_text').val()
+            $.ajax({
+                type: 'POST',
+
+                url: "{% url 'DES_FUNCTION:decrypt' %}",
+                data: {
+                    'cipher_text': cipher,
+                    'Key': key
+                },
+                success: function (msg) {
+                    $('textarea#plain_t').val(msg)
+                }
+            });
+        });
+
+    </script>
+</body>
+{% endautoescape %}
+</html>
